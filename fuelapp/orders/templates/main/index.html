@@ -1,1 +1,25 @@
-<h1>Hello SHELL BONJE</h1>
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+    <body>
+        <br>
+        <br>
+
+        <div class="text-center">
+
+            <h3> Welcome. </h3>
+
+            <br>
+
+            <h5>Order Management System</h5>
+
+            <hr>
+
+            <br>
+
+            <a class="btn btn-primary" type="button" href="{% url 'register' %}">Create Your Account</a>
+        </div>
+    </body>
+
+{% endblock %}

@@ -39,7 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     'orders',
+
+    'crispy_forms'
 ]
+
+# I added this for the crispy forms (Imraan Dixit)
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
