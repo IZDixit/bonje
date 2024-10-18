@@ -13,11 +13,17 @@
 
             <br>
 
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
             <form method="POST" autocomplete="off">
 
                 {% csrf_token %}
 
-                {{form|crispy}}
+                {{ form|crispy }}
 
                 <br>
 
@@ -28,6 +34,7 @@
             <div class="text-center">
 
                 <p> Don't have an account? </p> <a href="{% url 'register' %}">Register</a>
+                <p><a href="{% url '' %}">Forgot your password?</a></p>
             </div>
         </div>
 

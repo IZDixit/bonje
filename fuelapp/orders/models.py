@@ -6,7 +6,7 @@ class UserProfile(models.Model):
     USER_TYPE_CHOICES = (
         ('manager', 'Manager'),
         ('supervisor', 'Supervisor'),
-        ('Customer', 'Customer'),
+        ('customer', 'Customer'),
     )
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -14,4 +14,4 @@ class UserProfile(models.Model):
     phone = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.user.name} ({self.user_type})"
+        return f"{self.user.username} ({self.user_type})"
