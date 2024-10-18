@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+    <body>
+        <br>
+        <br>
+
+        <div class="container">
+
+            <h3> Welcome. </h3>
+
+            <br>
+            <h4> Registration Pending </h4>
+
+            <p>{{ message }}</p>
+
+            <p>Please check back later for updates </p>
+            <a href="{% url 'my-login'%}">Return to LogIn</a>
+            <hr>
+
+            <br>
+
+        </div>
+    </body>
+
+{% endblock %}

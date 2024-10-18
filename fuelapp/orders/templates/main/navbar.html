@@ -45,7 +45,7 @@
           <!-- Conditional links based on user type -->
           {% if user.userprofile.user_type == 'manager' %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url '' %}">Manager Panel &nbsp; </a>
+              <a class="nav-link" href="{% url 'approve_users' %}"> Approve Users &nbsp; </a>
             </li>
           {% elif user.userprofile.user_type == 'supervisor' %}
             <li class="nav-item">

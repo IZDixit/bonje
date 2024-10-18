@@ -21,8 +21,9 @@ class CreateUserForm(forms.ModelForm):
         user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
-            # Create UserProfile with the specified user type
-            # UserProfile.objects.create(user=user, user_type=self.cleaned_data["user_type"])
+            # N/b Added later (next steps)
+            # Create UserProfile with 'pending' status
+            UserProfile.objects.create(user=user, user_type=self.cleaned_data['user_type'])
         return user
 
     

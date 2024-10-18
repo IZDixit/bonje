@@ -1,0 +1,52 @@
+{% extends 'main/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <body>
+        <br>
+        <br>
+
+        <div class="text-center">
+
+            <h4>Approve Pending Users</h4>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{message}}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <th>Select</th>
+                        <th>User Name</th>
+                        <th>User Type</th>
+                        <th>Status</th>
+                    </tr>
+                    {% for profile in profiles %}
+                    <tr>
+                        <td><input type="checkbox" name="user_ids" value="{{ profile.user.id }}"></td>
+                        <td>{{ profile.user.username }}</td>
+                        <td>{{ profile.user_type }}</td>
+                        <td>{{ profile.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                {% if not profiles %}
+                <p>No pending registrations </p>
+                {% endif %}
+            </form>
+        
+            <br>
+
+        </div>
+    </body>
+
+{% endblock %}
