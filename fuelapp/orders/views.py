@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import CreateUserForm, LoginForm
 from django.contrib import messages
 from django.db import IntegrityError # Import the IntegrityError exception.
-from .models import UserProfile
+from .models import UserProfile, Order
 from django.utils import timezone
 # Create your views here.
 
@@ -187,7 +187,7 @@ def my_login(request):
 
     return render(request, 'main/my-login.html', context=context)
 
-
+# DASHBOARDS!
 @login_required(login_url='my-login')
 def dashboard(request):
     if request.user.is_authenticated:
@@ -214,8 +214,15 @@ def manager_dashboard(request):
 def supervisor_dashboard(request):
     return render(request, 'supervisor/dashboard.html')
 
+# Customer Dashboard.
+@login_required
 def customer_dashboard(request):
-    return render(request, 'customer/dashboard.html')
+    # Filter Orders to show those of the logged in user only.
+    
+    my_orders = Order.objects.filter(user=request.user)
+    context = {'orders': my_orders}
+    
+    return render(request, 'customer/dashboard.html', context)
 
 def main_dashboard(request):
     return render(request, 'main/dashboard.html')

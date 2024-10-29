@@ -8,9 +8,51 @@
 
         <div class="text-center">
 
-            <h5>Welcome to the Customer Dashboard {{user}}</h5>
+            <h4>Welcome to the Customer Dashboard {{user}}</h4>
 
             <hr>
+
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'dashboard' %}">
+                Place a new Order
+            </a>
+
+            <hr>
+
+            <table class="table table-striped table-hover table-bordered">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col">User Name</th>
+                        <th scope="col">Product</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Vehicle no.</th>
+                        <th scope="col">Driver</th>
+                        <th scope="col">Driver ID</th>
+                        <th scope="col">hh:mm:tt</th>
+                        
+                        <th scope="col">View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if orders.exists %}
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.user }}</td>
+                            <td>{{ order.product_name }}</td>
+                            <td>{{ order.quantity }}</td>
+                            <td>{{ order.vehicle_number }}</td>
+                            <td>{{ order.driver_name }}</td>
+                            <td>{{ order.driver_id_number }}</td>
+                            <td>{{ order.vehicle_number }}</td>
+                            <td>{{ order.created_at }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7">No orders placed.</td>
+                    </tr>
+                {% endif %}
+                </tbody>
+            </table>
 
             <br>
 

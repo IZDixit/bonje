@@ -48,4 +48,4 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f"Order {self.id} by {self.user.username}"
+        return f"Order {self.id} by {self.user.username} at {self.created_at}"
