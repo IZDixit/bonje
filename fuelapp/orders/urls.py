@@ -8,6 +8,10 @@ urlpatterns = [
 
     path('approve-users/', views.approve_users, name='approve_users'),
 
+    path('approved-users/', views.approved_users, name='approved_users'),
+
+    path('cancelled-approvals/', views.cancelled_approvals, name='cancelled_approvals'),
+
     path('registration-pending/', views.registration_pending, name='registration_pending'),
 
     path('my-login/', views.my_login, name='my-login'),

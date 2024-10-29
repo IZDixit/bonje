@@ -6,6 +6,7 @@ from .forms import CreateUserForm, LoginForm
 from django.contrib import messages
 from django.db import IntegrityError # Import the IntegrityError exception.
 from .models import UserProfile
+from django.utils import timezone
 # Create your views here.
 
 def home(request):
@@ -57,19 +58,71 @@ def approve_users(request):
     pending_profiles = UserProfile.objects.filter(status='pending')
 
     if request.method == 'POST':
-        user_ids = request.POST.get('user_ids')
-        for user_id in user_ids:
-            try:
-                profile = UserProfile.objects.get(user_id=user_id)
-                profile.status = 'approved'
-                profile.save()
-                messages.success(request, f"User {profile.user.username} approved successfully")
-            except UserProfile.DoesNotExist:
-                messages.error(request, f"User with ID {user_id} does not exist!")
-            except Exception as e:
-                messages.error(request, f"Error approving user {user_id}: {str(e)}")
-        return redirect('approve-users')
+        if 'approve' in request.POST:
+            user_ids = request.POST.getlist('user_ids') or [] # Fetch multiple user IDs hence we use ".getlist" 
+                                                            # And take note that we are initializing as an empty list if no checkbox are selected.
+            for user_id in user_ids:
+                try:
+                    profile = UserProfile.objects.get(user_id=user_id)
+                    profile.status = 'approved'
+                    profile.approved_date = timezone.now()
+                    profile.save()
+                    messages.success(request, f"User {profile.user.username} approved successfully")
+                except UserProfile.DoesNotExist:
+                    messages.error(request, f"User with ID {user_id} does not exist!")
+                except Exception as e:
+                    messages.error(request, f"Error approving user {user_id}: {str(e)}")
+            return redirect('approve_users')
+    
+        elif 'reject' in request.POST:
+            user_ids = request.POST.getlist('user_ids') or []
+            for user_id in user_ids:
+                try:
+                    profile = UserProfile.objects.get(user_id=user_id)
+                    profile.status = 'rejected'
+                    profile.rejected = True
+                    profile.save()
+                    messages.success(request, f"User {profile.user.username} rejected successfully")
+                except UserProfile.DoesNotExist:
+                    messages.error(request, f"User with ID {user_id}: {str(e)}")
+                return redirect('approve_users')
+            
     return render(request, 'main/approve_user.html', {'profiles': pending_profiles})
+
+# Manager disable user temporarily and permanently.
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'manager')
+def approved_users(request):
+    approved_profiles = UserProfile.objects.filter(status='approved')
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        action = request.POST.get('action')
+
+        try:
+            profile = UserProfile.objects.get(user_id=user_id)
+            if action == 'disable_temp':
+                profile.status = 'pending'
+                profile.save()
+                messages.success(request, f"User {profile.user.username} temporarily disabled.")
+            elif action == 'disable_perm':
+                profile.status = 'rejected'
+                # profile.rejected = True
+                profile.save()
+                messages.success(request, f"User {profile.user.username} permanently disabled.")
+        except UserProfile.DoesNotExist:
+            messages.error(request, f"User with ID {user_id} does not exist!")
+        return redirect('approved_users')
+
+    return render(request, 'main/approved_users.html', {'profiles': approved_profiles})
+
+# Manager, This will list out all rejected users.
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'manager')
+def cancelled_approvals(request):
+    cancelled_profiles = UserProfile.objects.filter(status="rejected")
+    return render(request, 'main/cancelled_approvals.html', {'profiles': cancelled_profiles})
+            
         
 # Registration pending
 

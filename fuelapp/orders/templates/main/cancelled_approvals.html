@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <body>
+        <h4>Cancelled Approvals</h4>
+        <hr>
+        <table class="table table-striped">
+            <tr>
+                <th>User Name</th>
+                <th>User Type</th>
+                <th>Status</th>
+                <th>Approved Date</th>
+            </tr>
+            {% for profile in profiles %}
+            <tr>
+                <td>{{ profile.user.username }}</td>
+                <td>{{ profile.user_type }}</td>
+                <td>{{ profile.status }}</td>
+                <td>{{ profile.approved_date }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+    </body>
+
+{% endblock %}

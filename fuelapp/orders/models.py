@@ -12,7 +12,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     user_type = models.CharField(max_length=50, choices=USER_TYPE_CHOICES)
     phone = models.CharField(max_length=15,blank=True, null=True)
-    status = models.CharField(max_length=20, choices=[('pending','Pending'), ('approved', 'Approved')], default='pending')
+    status = models.CharField(max_length=20, choices=[('pending','Pending'), ('approved', 'Approved'), ('rejected','Rejected'), ('disabled','Disabled')], default='pending')
 
     def __str__(self):
         return f"{self.user.username} ({self.user_type})"

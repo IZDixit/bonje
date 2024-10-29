@@ -31,21 +31,18 @@
               <a class="nav-link" href="{% url 'dashboard' %}">Dashboard &nbsp; <i class="fa fa-home" aria-hidden="true"></i> </a>
   
             </li>
-  
-  
-            &nbsp;     &nbsp;     &nbsp; 
-  
-  
-            <li class="nav-item">
-  
-              <a class="nav-link" href="{% url 'user-logout' %}">Sign out &nbsp; <i class="fa fa-sign-out" aria-hidden="true"></i> </a>
-  
-            </li>
           
           <!-- Conditional links based on user type -->
           {% if user.userprofile.user_type == 'manager' %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'approve_users' %}"> Approve Users &nbsp; </a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="customerCenterDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Customer Center
+              </a>
+              <div class="dropdown-menu" aria-labelledby="customerCenterDropdown">
+                <a class="dropdown-item" href="{% url 'approve_users' %}"> Approve Users </a>
+                <a class="dropdown-item" href="{% url 'approved_users' %}"> Approved Users </a>
+                <a class="dropdown-item" href="{% url 'cancelled_approvals' %}">Cancelled Approvals</a>
+              </div>
             </li>
           {% elif user.userprofile.user_type == 'supervisor' %}
             <li class="nav-item">
@@ -67,17 +64,19 @@
           </li>
         {% endif %}
       </ul>
+
   
       <!-- Right side of the navbar -->
-      <!-- <ul class="navbar-nav">
+      <ul class="navbar-nav">
         {% if user.is_authenticated %}
-          <li class="nav-item">
-            <span class="navbar-text">Hello, {{ user.username }}!</span>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'user-logout' %}">Logout</a>
-          </li>
+            &nbsp;     &nbsp;     &nbsp; 
+  
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'user-logout' %}">Sign out &nbsp; <i class="fa fa-sign-out" aria-hidden="true"></i> </a>  
+            </li>
         {% endif %}
-      </ul> -->
+
+
+      </ul>
     </div>
   </nav>
