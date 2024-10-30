@@ -12,7 +12,7 @@
 
             <hr>
 
-            <a class="btn btn-outline-primary btn-sm" href="{% url 'dashboard' %}">
+            <a class="btn btn-outline-primary btn-sm" href="{% url 'create_record' %}">
                 Place a new Order
             </a>
 
@@ -28,6 +28,8 @@
                         <th scope="col">Driver</th>
                         <th scope="col">Driver ID</th>
                         <th scope="col">hh:mm:tt</th>
+                        <th scope="col">Account Status</th>
+                        <th scope="col">Order Status</th>
                         
                         <th scope="col">View</th>
                     </tr>
@@ -42,8 +44,10 @@
                             <td>{{ order.vehicle_number }}</td>
                             <td>{{ order.driver_name }}</td>
                             <td>{{ order.driver_id_number }}</td>
-                            <td>{{ order.vehicle_number }}</td>
                             <td>{{ order.created_at }}</td>
+                            <td>{{ order.account_status }}</td>
+                            <td>{{ order.order_status }}</td>
+                            <td> <a href={% url 'record' order.id %}>View Order</a></td>
                         </tr>
                     {% endfor %}
                 {% else %}

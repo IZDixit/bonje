@@ -1,0 +1,36 @@
+{% extends 'main/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <body>
+
+        <div class="container bg-primary shadow-md p-5 form-layout">
+            <h3> Place a New Order. </h3>
+            <h6>Place in order as per your requirements.</h6>
+            <hr>
+
+            <br>
+
+            <form method="POST" autocomplete="off">
+
+                {% csrf_token %}
+
+                {{ form|crispy }}
+
+                <br>
+
+                <button type="submit" class="btn btn-primary w-100 btn-block p-2"> Place Order </button>
+
+            </form>
+            <br>
+        </div>
+
+        <br>
+        
+
+    </body>
+
+
+{% endblock %}

@@ -27,4 +27,13 @@ urlpatterns = [
     path('customer/dashboard/', views.customer_dashboard, name="customer_dashboard"),
 
     path('main/dashboard/', views.main_dashboard, name="main_dashboard"),
+
+    path('customer/create-record/', views.create_record, name="create_record"),
+
+    path('customer/update-record/<int:pk>/', views.update_record, name="update_record"),
+
+    path('record/<int:pk>/', views.singular_record, name="record"),
+
+    path('delete-record/<int:pk>/', views.delete_record, name="delete_record"),
+
 ]

@@ -1,20 +1,94 @@
 {% extends 'main/base.html' %}
 
+
 {% block content %}
 
     <body>
+        <h4>Manager Dashboard</h4>
+        <hr>
         <br>
-        <br>
+        <!-- Filter Form -->
+        <form method="GET" action="{% url 'manager_dashboard' %}" class="form-inline mb-3">
+            <input type="date" name="date" class="form-control" placeholder="Filter by Date">
+            <input type="number" name="month" min="1" max="12" class="form-control" placeholder="Filter by Month">
+            <input type="number" name="year" min="2000" max="{{ now|date:'Y' }}" class="form-control" placeholder="Filter by Year">
+            <button type="submit" class="btn btn-primary">Apply Filter</button>
+        </form>
 
-        <div class="text-center">
+        <!-- Bar Chart Canvas -->
+        <canvas id="customerChart" width="200" height="100"></canvas>
 
-            <h5>Welcome to the Manager Dashboard {{user}}</h5>
+        <!-- Table of customer order totals -->
+        <form method="POST" action="{% url 'manager_dashboard' %}">
+            {% csrf_token %}
 
-            <hr>
+            <!--Action Buttons -->
+            <button type="submit" name="action" value="open" class="btn btn-success" {% if customer.account_status == 'open' %}disabled{% endif %}>
+                Open Account
+            </button>
+            <button type="submit" name="action" value="close" class="btn btn-danger" {% if customer.account_status == 'closed' %}disabled{% endif %}>
+                Close Account
+            </button>
 
-            <br>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Customer Username</th>
+                        <th>Total Quantity</th>
+                        <th>Account Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customer_totals %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="user_ids" value="{{ customer.user__username }}">
+                        </td>
+                        <td>{{ customer.user__username }}</td>
+                        <td>{{ customer.total_quantity }}</td>
+                        <td>
+                            <select name="account_status" onchange="this.form.submit()">
+                                <option value="open" {% if customer.account_status == 'open' %}selected{% endif %}>Open</option>
+                                <option value="closed" {% if customer.account_status == 'closed' %}selected{% endif %}>Closed</option>
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
 
-        </div>
+        <!-- Include Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            // Prepare data for Chart.js
+            const chartLabels = {{ chart_data.labels|safe }};
+            const chartData = {{ chart_data.data|safe }};
+
+            const ctx = document.getElementById('customerChart').getContext('2d');
+            const customerChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Total Quantity',
+                        data: chartData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
     </body>
 
 {% endblock %}

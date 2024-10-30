@@ -1,12 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import auth, User
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import CreateUserForm, LoginForm
+from .forms import CreateUserForm, LoginForm, CreateRecordForm, UpdateRecordForm
 from django.contrib import messages
 from django.db import IntegrityError # Import the IntegrityError exception.
 from .models import UserProfile, Order
 from django.utils import timezone
+from django.db.models import Sum
+from datetime import datetime
 # Create your views here.
 
 def home(request):
@@ -207,12 +209,81 @@ def dashboard(request):
             return render(request, 'main/dashboard.html') # Default Template
     else:
         return redirect('my-login')
-    
+# Manager, Dashboard
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'manager')   
 def manager_dashboard(request):
-    return render(request, 'manager/dashboard.html')
+    # Table part.
+    # Sum of quantities grouped by user
+    customer_totals = (
+        Order.objects.values('user__username')
+        .annotate(total_quantity=Sum('quantity'))
+    )
+    if request.method == 'POST':
+        # Handle batch open or close action
+        action = request.POST.get('action')
+        selected_user_ids = request.POST.getlist('user_ids')
 
+        if selected_user_ids:
+            for user_id in selected_user_ids:
+                orders = Order.objects.filter(user_id=user_id)
+                if action == 'open':
+                    orders.update(account_status='open')
+                elif action == 'close':
+                    orders.update(account_status='closed')
+            messages.success(request, f"Account successfully {action}.")
+        else:
+            messages.warning(request, "No users selected.")
+        return redirect('manager_dashboard')
+    # Graph part
+    # Filtering
+    date_filter = request.GET.get('date')
+    month_filter = request.GET.get('month')
+    year_filter = request.GET.get('year')
+
+    # Filter customer orders based on selected date, month, or year
+    orders = Order.objects.all()
+    if date_filter:
+        orders = orders.filter(created_at__date=date_filter)
+    elif month_filter:
+        orders = orders.filter(created_at__month=month_filter)
+    elif year_filter:
+        orders = orders.filter(created_at__year=year_filter)
+
+    # Aggregate total quantity per customer
+    # already did it above in the table part.^
+
+    # Prepare data for Chart.js
+    chart_data = {
+        'labels': [item['user__username'] for item in customer_totals],
+        'data': [item['total_quantity'] for item in customer_totals],
+    }
+
+    context = {
+        'customer_totals': customer_totals,
+        'chart_data': chart_data,
+    }
+    return render(request, 'manager/dashboard.html', context)
+
+# Supervisor, Dashboard
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'supervisor')
 def supervisor_dashboard(request):
-    return render(request, 'supervisor/dashboard.html')
+    customers_orders = Order.objects.select_related('user').all().order_by('user__username')
+
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        new_status = request.POST.get('order_status')
+        try:
+            order = Order.objects.get(id=order_id)
+            order.order_status = new_status
+            order.save()
+            messages.success(request, f"Order {order_id} status updated to {new_status}")
+        except Order.DoesNotExist:
+            messages.error(request, f"Order with ID {order_id} does not exist.")
+        # return redirect('supervisor_dashboard')
+    context = {'customers_orders': customers_orders}
+    return render(request, 'supervisor/dashboard.html', context)
 
 # Customer Dashboard.
 @login_required
@@ -235,4 +306,98 @@ def user_logout(request):
 
     return redirect("my-login")
 
+# CUSTOMER FUNCTIONALITY.
+# Customer, Create Order
+
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'customer')
+def create_record(request):
+
+    form = CreateRecordForm()
+
+    if request.method == 'POST':
+        form = CreateRecordForm(request.POST)
+
+        if form.is_valid():
+            # Don't save the form directly; 
+            # Create an instance to assign user (otherwise IntegrityError)
+            order = form.save(commit=False)
+            order.user = request.user # Assign the logged in user
+            order.save()
+
+            return redirect("customer_dashboard")
         
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'customer/create-record.html', context)
+
+# Customer, Update order, make corrections
+# We will only allow this if order_status != collected.
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'customer')
+def update_record(request, pk):
+
+    order = get_object_or_404(Order, id=pk)
+
+    # Check if the order status is collected
+    if order.order_status == 'collected':
+        messages.error(request, "This order has already been collected and cannot be edited.")
+        return redirect("customer_dashboard")
+    
+    form = UpdateRecordForm(instance=order)
+
+    if request.method == 'POST':
+        form = UpdateRecordForm(request.POST, instance=order)
+
+        if form.is_valid():
+            # Assign User and save the order.
+            order = form.save(commit=False)
+            order.user = request.user # Assign the logged in user
+            order.save()
+
+            return redirect("customer_dashboard")
+        
+    context = {
+        'form': form,
+    }
+
+    return render(request, 'customer/update-record.html', context)
+
+
+# Link to the update order functionality
+# Read or view a singular record.
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'customer')
+def singular_record(request, pk):
+    
+    all_records = Order.objects.get(id=pk)
+
+    context = {
+        'order': all_records,
+        }
+
+    return render(request, 'customer/view-record.html', context)
+
+# Delete an order, only if it is != 'collected'
+# Customer, Delete order placed.
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'customer')
+def delete_record(request, pk):
+
+    order = get_object_or_404(Order, id=pk)
+
+    # Check if order status is 'collected'
+    if order.order_status == 'collected':
+        messages.error(request, "This order has already been collected and cannot be deleted.")
+        return redirect("customer_dashboard")
+    
+    # If not collected, delete order.
+    order.delete()
+    messages.success(request, "Order Successfully deleted.")
+
+    return redirect("customer_dashboard")
+
+    
+

@@ -24,6 +24,15 @@ class Order(models.Model):
         ('UX','UX'),
         ('LUBRICANTS','LUBRICANTS'),
     ]
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('closed', 'Closed'),
+    ]
+    ORDER_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('collected', 'Collected'),
+        ('on hold', 'On Hold'),
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product_name = models.CharField(
         max_length=100,
@@ -45,6 +54,16 @@ class Order(models.Model):
         max_length=50,
         blank=True, # This field is optional
         help_text="Enter driver's ID number or Telephone (optional)"
+    )
+    account_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='open'
+    )
+    order_status = models.CharField(
+        max_length=20,
+        choices=ORDER_STATUS_CHOICES,
+        default='pending'
     )
 
     def __str__(self):

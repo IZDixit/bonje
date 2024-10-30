@@ -7,7 +7,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms.widgets import PasswordInput, TextInput
 
-from .models import UserProfile
+from .models import UserProfile,Order
 
 class CreateUserForm(forms.ModelForm):
     user_type = forms.ChoiceField(choices=UserProfile.USER_TYPE_CHOICES)
@@ -31,39 +31,18 @@ class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=TextInput(attrs={'placeholder': 'Username'}))
     password = forms.CharField(widget=PasswordInput(attrs={'placeholder': 'Password'}))
 
-    # def confirm_login_allowed(self, user):
-    #     # Block certain user types from logging into unauthorized page.
-    #     print(f"User: {user.username}, User Type: {user.userprofile.user_type}")  # Debugging line
-    #     if hasattr(user, 'userprofile') and user.userprofile.user_type == 'customer':
-    #         raise forms.ValidationError("Customers are not allowed to log in here.")
+# Customer, Placing order form.
+class CreateRecordForm(forms.ModelForm):
 
+    class Meta:
 
+        model = Order
+        fields = ['product_name','quantity','vehicle_number','driver_name','driver_id_number']
 
+# Customer, Update order form.
+class UpdateRecordForm(forms.ModelForm):
 
+    class Meta:
 
-
-
-# First comment out
-# class CreateUserForm(UserCreationForm):
-#     USER_TYPE_CHOICES = (
-#         ('manager', 'Manager'),
-#         ('supervisor', 'Supervisor'),
-#         ('customer', 'Customer'),
-#     )
-
-#     user_type = forms.ChoiceField(choices=USER_TYPE_CHOICES, label="User Type")
-#     phone = forms.CharField(max_length=15, required=False, label="Phone")
-
-#     class Meta:
-#         model = User
-#         fields = ['username', 'password1', 'password2']
-
-#     def save(self, commit=True):
-#         user = super().save(commit=False)
-#         if commit:
-#             user.save()
-#             # Create the associated User Profile with the chosen user type and phone
-#             user_type = self.cleaned_data['user_type']
-#             phone = self.cleaned_data['phone']
-#             UserProfile.objects.create(user=user, user_type=user_type, phone=phone)
-#         return user
+        model = Order
+        fields = ['product_name','quantity','vehicle_number','driver_name','driver_id_number']
