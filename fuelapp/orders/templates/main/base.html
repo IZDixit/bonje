@@ -25,6 +25,25 @@
             <br>
 
             <!-- Notification messages -->
+            {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                    <p id="message-timer0" class="alert alert-success float-center text-center message-text">
+                        <i class="fa fa-check" aria-hidden="true"></i> &nbsp; {{ message }}
+                    </p>
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+                    <p id="message-timer1" class="alert alert-danger float-center text-center message-text">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp; {{ message }}
+                    </p>
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <p id="message-timer2" class="alert alert-danger float-center text-center message-text">
+                        <i class="fa fa-times-circle" aria-hidden="true"></i> &nbsp; {{ message }}
+                    </p>
+                {% else %}
+                    <p id="message-timer3" class="alert alert-info float-center text-center message-text">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i> &nbsp; {{ message }}
+                    </p>
+                {% endif %}
+            {% endfor %}
 
             {% block content %}
 

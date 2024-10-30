@@ -303,6 +303,7 @@ def main_dashboard(request):
 def user_logout(request):
 
     auth.logout(request)
+    messages.success(request, "Logged out successfully.")
 
     return redirect("my-login")
 
