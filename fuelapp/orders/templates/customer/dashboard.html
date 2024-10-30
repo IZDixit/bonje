@@ -13,7 +13,7 @@
             <hr>
 
             <a class="btn btn-outline-primary btn-sm" href="{% url 'create_record' %}">
-                Place a new Order
+                Place a new Order &nbsp; <i class="fa fa-plus" aria-hidden="true"></i>
             </a>
 
             <hr>
@@ -31,7 +31,7 @@
                         <th scope="col">Account Status</th>
                         <th scope="col">Order Status</th>
                         
-                        <th scope="col">View</th>
+                        <th scope="col">View Order</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,7 +47,7 @@
                             <td>{{ order.created_at }}</td>
                             <td>{{ order.account_status }}</td>
                             <td>{{ order.order_status }}</td>
-                            <td> <a href={% url 'record' order.id %}>View Order</a></td>
+                            <td> <a class="btn btn-success btn-sm" href={% url 'record' order.id %}><i class="fa fa-eye" aria-hidden="true"></i></a></td>
                         </tr>
                     {% endfor %}
                 {% else %}

@@ -25,18 +25,14 @@
           &nbsp;     &nbsp;     &nbsp;
         <!-- Show these links to all logged-in users -->
         {% if user.is_authenticated %}
-  
-            <li class="nav-item">
-        
-              <a class="nav-link" href="{% url 'dashboard' %}">Dashboard &nbsp; <i class="fa fa-home" aria-hidden="true"></i> </a>
-  
-            </li>
-          
           <!-- Conditional links based on user type -->
           {% if user.userprofile.user_type == 'manager' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'manager_dashboard' %}">Dashboard &nbsp; <i class="fa fa-home" aria-hidden="true"></i> </a>
+            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="customerCenterDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Customer Center
+                Customer Center &nbsp; <i class="fa fa-users" aria-hidden="true"></i>
               </a>
               <div class="dropdown-menu" aria-labelledby="customerCenterDropdown">
                 <a class="dropdown-item" href="{% url 'approve_users' %}"> Approve Users </a>
@@ -46,9 +42,15 @@
             </li>
           {% elif user.userprofile.user_type == 'supervisor' %}
             <li class="nav-item">
+              <a class="nav-link" href="{% url 'supervisor_dashboard' %}">Dashboard &nbsp; <i class="fa fa-home" aria-hidden="true"></i> </a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{% url '' %}">Customer Orders &nbsp; </a>
             </li>
           {% elif user.userprofile.user_type == 'customer' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'customer_dashboard' %}">Dashboard &nbsp; <i class="fa fa-home" aria-hidden="true"></i> </a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url '' %}">My Orders &nbsp; </a>
             </li>

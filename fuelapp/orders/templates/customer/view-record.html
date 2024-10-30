@@ -6,14 +6,13 @@
         <!-- We will be using cards to display, read more about it. very interesting features -->
 
         <div class="card">
-            
-            &nbsp; &nbsp;
-            <strong>
-                &nbsp;{{order.vehicle_number|upper}}
-            </strong>
-            <hr>
 
             <div class="card-body">
+                &nbsp; &nbsp;
+                <strong>
+                    &nbsp; <i class="fa fa-truck" aria-hidden="true"></i> &nbsp; {{order.vehicle_number|upper}}
+                </strong>
+                <hr>
 
                 <p> <strong>Product: </strong> {{ order.product_name }}</p>
                 <p> <strong>Driver Name: </strong> {{ order.driver_name }}</p>
@@ -25,11 +24,11 @@
 
         </div>
         <br>
-        <a href="{% url 'customer_dashboard' %}" class="btn btn-secondary"> Return </a>
+        <a href="{% url 'customer_dashboard' %}" class="btn btn-secondary"> Return &nbsp; <i class="fa fa-arrow-left" aria-hidden="true"></i> </a>
         &nbsp;
-        <a href="{% url 'update_record' order.id %}" class="btn btn-info"> Update Order </a>
+        <a href="{% url 'update_record' order.id %}" class="btn btn-info"> Update Order &nbsp; <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </a>
         &nbsp;
-        <a href="{% url 'delete_record' order.id %}" class="btn btn-danger"> Delete Order </a>
+        <a href="{% url 'delete_record' order.id %}" class="btn btn-danger"> Delete Order &nbsp; <i class="fa fa-trash-o" aria-hidden="true"></i> </a>
         &nbsp;
         
     </body>
