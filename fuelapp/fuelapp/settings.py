@@ -12,9 +12,15 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config, Csv
+import os
+import environ
 
+# Initialize environment variables
+env = environ.Env()
+environ.Env.read_env() # Read the .env file
 
-
+# Access the DJANGO_ENV variable
+DJANGO_ENV = env('DJANGO_ENV', default='production') # Default to production if not set
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,14 +33,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = env('DEBUG', default=False, cast=bool)
 
 # Preventing Cross-site Scripting (XSS) attacks (ID)
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
+if DJANGO_ENV == 'development':
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Redirect all non-HTTPS to HTTP. SSL redirect (ID)
-SECURE_SSL_REDIRECT = True
+if DJANGO_ENV == 'development':
+    SECURE_SSL_REDIRECT = False
+else:
+    SECURE_SSL_REDIRECT = True
+
+
 
 # Protect from man-in-the-middle attacks (ID)
 # HTTP strict Transport security (HSTS)
@@ -44,8 +56,10 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 # Prevent accidental sending of session or CSRF cookie to HTTP (ID)
 # Cross-site request forgery (CSRF) protection
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# We will need to set back to True for deployment.
+if DJANGO_ENV == 'development':
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 
 # Allowed hosts configuration
@@ -53,6 +67,16 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=Csv())
 
 # Redis configuration for Defender (or any other Redis usage)
 DEFENDER_REDIS_URL = config('DEFENDER_REDIS_URL', default='redis://localhost:6379/0')
+
+# Debugging above
+print(f'DJANGO_ENV: {DJANGO_ENV}')
+print(f'SECURE_SSL_REDIRECT: {SECURE_SSL_REDIRECT}')
+print(f'SECURE_BROWSER_XSS_FILTER: {SECURE_BROWSER_XSS_FILTER}')
+print(f'SECURE_CONTENT_TYPE_NOSNIFF: {SECURE_CONTENT_TYPE_NOSNIFF}')
+print(f'SESSION_COOKIE_SECURE: {SESSION_COOKIE_SECURE}')
+print(f'CSRF_COOKIE_SECURE: {CSRF_COOKIE_SECURE}')
+
+
 
 # Application definition
 
@@ -73,6 +97,9 @@ INSTALLED_APPS = [
     'schema_graph',
 
     'defender',
+
+    'django_extensions',
+
 ]
 
 # I added this for the crispy forms (Imraan Dixit)
