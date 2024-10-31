@@ -17,8 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from schema_graph.views import Schema
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('orders.urls')),
+    path('silk/', include('silk.urls', namespace='silk')),
+    path("schema/", Schema.as_view()),
 ]

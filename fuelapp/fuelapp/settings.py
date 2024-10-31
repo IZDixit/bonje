@@ -40,12 +40,16 @@ INSTALLED_APPS = [
 
     'orders',
 
-    'crispy_forms'
+    'crispy_forms',
+
+    'silk',
+
+    'schema_graph',
 ]
 
 # I added this for the crispy forms (Imraan Dixit)
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
+# I added silky middleware, this allows me to track performance. (ID)
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -54,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = "fuelapp.urls"
