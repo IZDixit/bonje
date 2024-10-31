@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +21,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-)d0hd6xmatrt3bfbd$yv+5bw5s*a#@!1)n@=8^v1znd!n9@(73"
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+# Preventing Cross-site Scripting (XSS) attacks (ID)
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Redirect all non-HTTPS to HTTP. SSL redirect (ID)
+SECURE_SSL_REDIRECT = True
+
+# Protect from man-in-the-middle attacks (ID)
+# HTTP strict Transport security (HSTS)
+SECURE_HSTS_SECONDS = 86400
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Prevent accidental sending of session or CSRF cookie to HTTP (ID)
+# Cross-site request forgery (CSRF) protection
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 ALLOWED_HOSTS = []
 
@@ -45,6 +64,8 @@ INSTALLED_APPS = [
     'silk',
 
     'schema_graph',
+
+    'defender',
 ]
 
 # I added this for the crispy forms (Imraan Dixit)
@@ -59,6 +80,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'silk.middleware.SilkyMiddleware',
+    'defender.middleware.FailedLoginMiddleware',
 ]
 
 ROOT_URLCONF = "fuelapp.urls"
