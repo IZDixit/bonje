@@ -107,6 +107,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # I added silky middleware, this allows me to track performance. (ID)
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -186,7 +187,21 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 # We added this (Imraan Dixit)
-STATICFILES_DIRS = [BASE_DIR/'static']
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+
+# ----DEPLOYMENT-----
+# We will be using "whitenoise" to handle static files in production (ID)
+# This will ensure django knows we will handle static files with whitenoise
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Storing static files in a particular folder, it will create a folder
+# named staticfiles and will store all references to the static files
+# when you run python manage.py collectstatic (ID)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
