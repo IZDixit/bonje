@@ -9,6 +9,7 @@ from .models import UserProfile, Order
 from django.utils import timezone
 from django.db.models import Sum
 from datetime import datetime
+from .graph import create_customer_chart
 # Create your views here.
 
 def home(request):
@@ -253,15 +254,16 @@ def manager_dashboard(request):
     # Aggregate total quantity per customer
     # already did it above in the table part.^
 
-    # Prepare data for Chart.js
-    chart_data = {
-        'labels': [item['user__username'] for item in customer_totals],
-        'data': [item['total_quantity'] for item in customer_totals],
-    }
+    # Prepare data for Chart.js (We have switched to Matplotlib)
+    chart_labels = [item['user__username'] for item in customer_totals]
+    chart_data = [item['total_quantity'] for item in customer_totals]
+
+    # Generate Chart image (using function in graph.py file)
+    chart_image = create_customer_chart(chart_labels, chart_data)
 
     context = {
         'customer_totals': customer_totals,
-        'chart_data': chart_data,
+        'chart_image': chart_image,
     }
     return render(request, 'manager/dashboard.html', context)
 
