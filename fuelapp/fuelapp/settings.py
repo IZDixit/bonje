@@ -39,6 +39,9 @@ DEBUG = env('DEBUG', default=False, cast=bool)
 if DJANGO_ENV == 'development':
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
+else:
+    SECURE_BROWSER_XSS_FILTER = False
+    SECURE_CONTENT_TYPE_NOSNIFF = False
 
 # Redirect all non-HTTPS to HTTP. SSL redirect (ID)
 if DJANGO_ENV == 'development':
@@ -60,13 +63,16 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 if DJANGO_ENV == 'development':
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
+else:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 
 # Allowed hosts configuration
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=Csv())
 
 # Redis configuration for Defender (or any other Redis usage)
-DEFENDER_REDIS_URL = config('DEFENDER_REDIS_URL', default='redis://localhost:6379/0')
+# DEFENDER_REDIS_URL = config('DEFENDER_REDIS_URL', default='redis://localhost:6379/0')
 
 # Debugging above
 print(f'DJANGO_ENV: {DJANGO_ENV}')
@@ -115,7 +121,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'silk.middleware.SilkyMiddleware',
-    'defender.middleware.FailedLoginMiddleware',
+    # 'defender.middleware.FailedLoginMiddleware',
 ]
 
 ROOT_URLCONF = "fuelapp.urls"

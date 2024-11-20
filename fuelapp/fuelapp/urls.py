@@ -21,8 +21,8 @@ from schema_graph.views import Schema
 
 urlpatterns = [
     # polite-elephant is my admin address (from default admin/)
-    path("polite-elephant/", admin.site.urls),
-    path('polite-elephant/defender/', include('defender.urls')),
+    path("admin/", admin.site.urls),
+    # path('admin/defender/', include('defender.urls')),
     path('', include('orders.urls')),
     path('silk/', include('silk.urls', namespace='silk')),
     path("schema/", Schema.as_view()),
