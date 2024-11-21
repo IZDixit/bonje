@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from import_export import resources
+
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -68,3 +70,22 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.id} by {self.user.username} at {self.created_at}"
+
+# The below model will allow us to import the sales by customer file 
+# and export it after we have edited as needed.
+# We will access this via the class in resources.py file.
+class SalesRecord(models.Model):
+    id = models.AutoField(primary_key=True)
+    Type = models.CharField(blank=True, null=True, max_length=100)
+    Date = models.DateField()
+    Num = models.CharField(blank=True, null=True, max_length=50)
+    Name = models.CharField(blank=True, null=True, max_length=200)
+    Memo = models.CharField(blank=True, null=True, max_length=50)
+    Item = models.CharField(max_length=100)
+    Qty = models.IntegerField()
+    Sales_Price = models.DecimalField(max_digits=10, decimal_places=2)
+    Amount = models.DecimalField(max_digits=10, decimal_places=2)
+    Balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.id} - {self.Name}"

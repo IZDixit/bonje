@@ -1,0 +1,19 @@
+{% extends 'main/base.html' %}
+
+
+{% block content %}
+
+    <body>
+        <div class="container mt-5 bg-primary shadow-md p-5 form-layout">
+            <h3 class="text-center"> Import Sales Record </h3>
+            <form method="POST" enctype="multipart/form-data" class="mt-4">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="myfile">Select File</label>
+                    <input type="file" name="file" class="form-control-file" accept=".csv" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-block p-2"> Import &nbsp; <i class="fa fa-file" aria-hidden="true"></i></button>
+            </form>
+    </body>
+
+{% endblock %}

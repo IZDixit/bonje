@@ -10,6 +10,11 @@ from django.utils import timezone
 from django.db.models import Sum
 from datetime import datetime
 from .graph import create_customer_chart
+from django.http import HttpResponse
+from tablib import Dataset
+from .resources import SalesRecordResource
+
+
 # Create your views here.
 
 def home(request):
@@ -403,4 +408,40 @@ def delete_record(request, pk):
     return redirect("customer_dashboard")
 
     
+# Importing my SalesRecord (sales by customer details) model
+# Will be done by manager profile
+@login_required
+@user_passes_test(lambda u: u.userprofile.user_type == 'manager')
+def import_sales_record(request):
+    """
+    Handles the import of sales records from a CSV file for managers.
 
+    This view checks if the request method is POST and processes the uploaded
+    file. It uses the SalesRecordResource to load and validate the data from
+    the CSV file. If the data is valid, it imports the sales records into the
+    database. Otherwise, it returns an error message indicating the issues
+    encountered during the import.
+
+    Returns:
+        HttpResponse: Success message if data is imported successfully, or an
+        error message if the import fails.
+    """
+    if request.method == 'POST':
+        sales_record_resource = SalesRecordResource()
+        dataset = Dataset()
+        new_sales_records = request.FILES['myfile']
+
+        if new_sales_records.name.endswith('csv'):
+            imported_data = dataset.load(new_sales_records.read().decode('utf-8'), format='csv')
+            result = sales_record_resource.import_data(dataset, dry_run=True)
+
+            if not result.has_errors():
+                sales_record_resource.import_data(dataset, dry_run=False)
+
+                return HttpResponse("Data imported successfully")
+            
+            else:
+                errors = result.errors
+                return HttpResponse(f"Error importing data {errors}")
+            
+    return render(request, 'manager/import-sales-record.html')

@@ -36,4 +36,6 @@ urlpatterns = [
 
     path('delete-record/<int:pk>/', views.delete_record, name="delete_record"),
 
+    path('manager/import-sales-record/', views.import_sales_record, name="import_sales_record"),
+
 ]

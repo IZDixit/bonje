@@ -106,6 +106,8 @@ INSTALLED_APPS = [
 
     'django_extensions',
 
+    'import_export',
+
 ]
 
 # I added this for the crispy forms (Imraan Dixit)
